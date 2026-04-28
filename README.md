@@ -1,6 +1,12 @@
 # Scaler Persona Chatbot
 
-A persona-based AI chatbot featuring three Scaler Academy leaders: **Anshuman Singh**, **Abhimanyu Saxena**, and **Kshitij Mishra**. Built with Next.js, Tailwind CSS, and the Anthropic Claude API.
+A persona-based AI chatbot featuring three Scaler Academy leaders: **Anshuman Singh**, **Abhimanyu Saxena**, and **Kshitij Mishra**. Built with Next.js, Tailwind CSS, and the Google Gemini API.
+
+> **Live Demo**: _Add your deployed URL here after deploying to Vercel_
+
+## Screenshots
+
+_Add screenshots of the chat interface (showing each persona) after running the app._
 
 ## Features
 

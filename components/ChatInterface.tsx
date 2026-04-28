@@ -13,9 +13,7 @@ interface Message {
 
 export default function ChatInterface() {
   const [activePersona, setActivePersona] = useState<PersonaId>("anshuman");
-  const [conversations, setConversations] = useState<
-    Record<PersonaId, Message[]>
-  >({ anshuman: [], abhimanyu: [], kshitij: [] });
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,14 +21,15 @@ export default function ChatInterface() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const persona = personas[activePersona];
-  const messages = conversations[activePersona];
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
   const handlePersonaChange = (id: PersonaId) => {
+    if (id === activePersona) return;
     setActivePersona(id);
+    setMessages([]);
     setError(null);
     setInput("");
   };
@@ -42,10 +41,7 @@ export default function ChatInterface() {
     const userMessage: Message = { role: "user", content: content.trim() };
     const updatedMessages = [...messages, userMessage];
 
-    setConversations((prev) => ({
-      ...prev,
-      [activePersona]: updatedMessages,
-    }));
+    setMessages(updatedMessages);
     setInput("");
     setIsLoading(true);
 
@@ -68,19 +64,12 @@ export default function ChatInterface() {
         content: data.message,
       };
 
-      setConversations((prev) => ({
-        ...prev,
-        [activePersona]: [...updatedMessages, assistantMessage],
-      }));
+      setMessages([...updatedMessages, assistantMessage]);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Something went wrong. Try again."
       );
-      // Remove the user message on error
-      setConversations((prev) => ({
-        ...prev,
-        [activePersona]: messages,
-      }));
+      setMessages(messages);
     } finally {
       setIsLoading(false);
       inputRef.current?.focus();
@@ -96,7 +85,6 @@ export default function ChatInterface() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-white border-b border-gray-200 px-4 py-3 shadow-sm">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div>
@@ -111,12 +99,10 @@ export default function ChatInterface() {
         </div>
       </header>
 
-      {/* Persona switcher */}
-      <div className="max-w-3xl w-full mx-auto w-full">
+      <div className="max-w-3xl w-full mx-auto">
         <PersonaSwitcher active={activePersona} onChange={handlePersonaChange} />
       </div>
 
-      {/* Messages */}
       <main className="flex-1 overflow-y-auto">
         <div className="max-w-3xl mx-auto px-4 py-4">
           {messages.length === 0 && (
@@ -165,7 +151,6 @@ export default function ChatInterface() {
         </div>
       </main>
 
-      {/* Input */}
       <footer className="bg-white border-t border-gray-200 px-4 py-3">
         <div className="max-w-3xl mx-auto flex gap-2 items-end">
           <textarea
